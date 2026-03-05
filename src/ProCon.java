@@ -1,29 +1,19 @@
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ProCon {
 
-    public Semaphore full , empty;
-    public ConcurrentLinkedDeque<Integer> deque;
+    public BlockingQueue<String>  queue;
 
     public ProCon(int size) {
-        deque = new ConcurrentLinkedDeque<>();
-        full = new Semaphore(0);
-        empty = new Semaphore(size);
+        queue = new LinkedBlockingQueue<>(size);
     }
 
-    public void enqueue(int x) throws InterruptedException {
-        empty.acquire();
-        deque.addFirst(x);
-        full.release();
+    public void enqueue(String x) throws InterruptedException {
+        queue.put(x);
     }
 
-    public int dequeue() throws InterruptedException {
-        full.acquire();
-        int resut = deque.pollLast();
-        empty.release();
-        return resut;
+    public String dequeue() throws InterruptedException {
+        return queue.take();
     }
 }
-
-
